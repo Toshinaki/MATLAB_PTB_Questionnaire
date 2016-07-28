@@ -21,3 +21,10 @@ Run a demo by executing Mainloop.m
 1. save selections to a file
 2. Is there a way to register key-press instead of the ugly "if elseif end".
 3. Support for mouse and gamepad
+
+## License
+For personal practice or learning, play with it freely;)
+
+For scientific research or experiment, please reference this using https://github.com/flasker/MATLAB_PTB_Questionnaire
+
+For other purpose, do contact me!
