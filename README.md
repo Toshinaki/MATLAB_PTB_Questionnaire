@@ -9,6 +9,6 @@ Control keys:
   3. Space key -- select current answer (somehow the enter key can't be detected during the loop)
 
 Todo:
-X 1. ENTER for recoding selection
+  1. ~~ENTER for recoding selection~~
   2. save selections to a file
   3. Is there a way to register key-press instead of the ugly "if elseif end".
