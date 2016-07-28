@@ -1,4 +1,4 @@
-# MATLAB_PTB_Questionnaire
+# MATLAB_PTB_Questionnaire -- the old version
 Display a questionnaire using psychtoolbox, and get input using keyboard
 
 Run a demo by executing runSurvey.m
