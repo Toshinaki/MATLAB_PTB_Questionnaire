@@ -4,11 +4,16 @@ Display a questionnaire using psychtoolbox, and get input from keyboard, mouse, 
 ~~It is a new version. The code itself didn't change too much; I just arranged the code to make it easier to integrate with other PTB experiments.~~
 
 ### --2016/07/30 update--
+Added:
+- Support for likert survey.
+
 Now it is the 3rd version of the code. The code changed a bit at how the rects for identifying the selection are generated.
 
 The 2nd version generates all rects in advance, which will break when there are too many questions which would cause a memory insufficiency.
 
 In this new version, the rects will be generated real time. Which means the same time you pressed space. **However**, the code that draws the rects becomes very ugly. This need to be rewrote later.
+
+----------------------------------------------
 
 The code in folder oldVer can be executed individually.
 
