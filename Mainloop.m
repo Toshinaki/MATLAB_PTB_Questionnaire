@@ -9,7 +9,7 @@ addpath(genpath(pwd));
 %--------------------------------------------------------------------------
 %                       Global variables
 %--------------------------------------------------------------------------
-global window  windowRect fontsize;
+global window  windowRect fontsize xCenter;
 
 
 
@@ -50,14 +50,15 @@ HideCursor;
 % Define some default values
 isdialog = true; % Change this value to determine whether to use dialog
 filename = 'survey.csv'; % The file name of survey to run; will open browser if not exists
-questNum = 9; % Number of questions in this survey
-ansNum = 4; % Number of answers of each question
+survey_type = 'likert'; % Type of the survey, can be "question", "likert"
+questNum = 10; % Number of questions in this survey
+ansNum = 5; % Number of answers of each question
 showQuestNum = 5; % Number of questions to display in one screen; you may need to try few times to get best display
 respdevice = 'key'; % The way participants take the survey; could be "key", "mouse", "game"
 
 % Prepare survey texture for later drawing; the file is loaded inside
 % prepareSurvey.m; for the detail of the csv file's structure, see loadSurvey.m
-[paperTexture, paperRect, qRects, aRects, questH, instruc] = prepareSurvey(isdialog, filename, questNum, ansNum, showQuestNum);
+[paperTexture, paperRect, questLine, ansLine, questH, ansW, instruc] = prepareSurvey(isdialog, filename, survey_type, questNum, ansNum, showQuestNum);
 
 % Prepare instructions.
 % Besides instruction from the file, the instruction of how to play with
@@ -70,15 +71,6 @@ deviceInstruc = getInstruc(respdevice);
 % Set font for instructions
 Screen('Textsize', window, fontsize);
 Screen('TextFont', window, 'Courier');
-
-% Keep a record of selections during loop
-% These will be used to draw marks
-selects = zeros([questNum, ansNum]);
-currQ = 1;
-currA = 0;
-% To keep the marks in right place while scrolling screen
-currRange = [1 showQuestNum]; 
-offset = 0;
 
 % Color settings
 % Set color for identifying currently focused question and answer
@@ -94,6 +86,26 @@ leftkey = KbName('LeftArrow');
 rightkey = KbName('RightArrow');
 escapekey = KbName('ESCAPE');
 spacekey = KbName('space');
+
+% Base rect for questions and answers
+baseQRect = [0 0 595 questH];
+if strcmp(survey_type, 'likert')
+    baseARect = [0 0 ansW fontsize];
+end
+
+% Keep a record of selections during loop
+% These will be used to draw marks
+selects = zeros([questNum, ansNum]);
+currQ = 1;
+currA = 0;
+% To keep the marks in right place while scrolling screen
+currRange = [1 showQuestNum]; 
+offset = 0;
+
+% Record selected rects here
+seleRects = nan(4, questNum);
+tempRects = nan(4, questNum);
+
 
 %--------------------------------------------------
 %                       Execution of Section two
@@ -166,12 +178,23 @@ while true
     Screen('DrawTextures', window, paperTexture, [], newpaper, 0, 0);
     
     if currQ % A question is focused; this is always true
-        qrect = qRects(:, currQ);
+        qrect = CenterRectOnPointd(baseQRect, xCenter, questH*(currQ-0.5));
         qrect(2:2:end) = qrect(2:2:end) + offset * questH;
         Screen('FillRect', window, qcolor, qrect); % draw a rect over the question
     end
     if currA % An answer is focused; right key must be pressed to show the rect
-        arect = aRects(:, currQ, currA);
+        switch survey_type
+            case 'question'
+                baseY = (currQ - 1) * questH + fontsize * (questLine(currQ) + 1) + fontsize/5; % this height may need some modification to show correctlu on your machine
+                baseY = baseY + fontsize * sum(ansLine(currQ, 1:(currA-1)));
+                arect = CenterRectOnPointd([0 0 595 fontsize*ansLine(currQ, currA)], xCenter, baseY+fontsize*ansLine(currQ, currA)/2);
+            case 'likert'
+                baseY = (currQ - 1) * questH + fontsize * (questLine(currQ) + 1) + fontsize/5; % this height may need some modification to show correctlu on your machine
+                arect = CenterRectOnPointd(baseARect, (xCenter-595/2)+(currA-0.5)*ansW, baseY+fontsize/2);
+        end
+        if keycode(spacekey)
+            tempRects(:, currQ) = arect;
+        end
         arect(2:2:end) = arect(2:2:end) + offset * questH;
         Screen('FrameRect', window, acolor, arect); % draw a rect over the answer
     end
@@ -179,7 +202,7 @@ while true
     % also draw the selected answers
     k = find(selects);
     if ~isempty(k) % check if any answer been selected
-        seleRects = aRects(:, k);
+        seleRects = tempRects;
         seleRects(2:2:end, :) = seleRects(2:2:end, :) + offset * questH;
         Screen('FillRect', window, scolor, seleRects);
     end

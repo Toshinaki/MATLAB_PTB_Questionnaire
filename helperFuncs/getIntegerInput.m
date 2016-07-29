@@ -3,7 +3,7 @@ function [ an_integer ] = getIntegerInput( prompt )
 
 warn = 'Please input an integer!! < %s > is not valid';
 while true
-    an_integer = input(['[*] ' promt], 's');
+    an_integer = input(['[*] ' prompt], 's');
     an_integer = str2double(an_integer);
     
     if isnan(an_integer)
