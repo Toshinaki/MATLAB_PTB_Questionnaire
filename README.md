@@ -37,6 +37,7 @@ Run a demo by executing Mainloop.m
 #### Keyboard:
 1. Arrow keys -- up, down for question; left, right for answer
 2. Space key -- select current answer (somehow the enter key can't be detected during the loop)
+
 #### Mouse:
 1. Any key click would do.
 2. Move mouse to the top edge or bottom edge to scroll. (I use this because that linux don't support GetMouseWheel function ORZ)
@@ -46,7 +47,7 @@ Run a demo by executing Mainloop.m
 1. save selections to a file
 2. Is there a way to register key-press instead of the ugly "if elseif end".
 3. Support for ~~mouse and~~ gamepad
-~~4. Rewrote the code that draws rects~~
+4. ~~Rewrote the code that draws rects~~
 
 ## License
 For personal practice or learning, play with it freely;)
