@@ -1,7 +1,16 @@
 # MATLAB_PTB_Questionnaire
 Display a questionnaire using psychtoolbox, and get input from keyboard, mouse, or gamepad
 
-~~It is a new version. The code itself didn't change too much; I just arranged the code to make it easier to integrate with other PTB experiments.~~
+### --2016/07/31 update--
+Added:
+- Support for mouse
+
+Set which device (mouse or keyboard for now) to use in the Mainloop.m
+
+Also changed how the rects generate a bit to support mouse functions.
+
+- About the memory insufficiency problem, it seems that when there are too many questions, the texture rect gets too big, and that would cause an error.
+- I don't know the threshold that would cause this problem; but in later update, I will implement a page function which would contain multiple textures with a proper number of questions to avoid this problem
 
 ### --2016/07/30 update--
 Added:
@@ -25,16 +34,19 @@ Run a demo by executing Mainloop.m
 > however, you need to use sca manually to clean the screen, for now
 
 ## Control keys:
-
+#### Keyboard:
 1. Arrow keys -- up, down for question; left, right for answer
 2. Space key -- select current answer (somehow the enter key can't be detected during the loop)
+#### Mouse:
+1. Any key click would do.
+2. Move mouse to the top edge or bottom edge to scroll. (I use this because that linux don't support GetMouseWheel function ORZ)
 
 ## Todo:
 
 1. save selections to a file
 2. Is there a way to register key-press instead of the ugly "if elseif end".
-3. Support for mouse and gamepad
-4. Rewrote the code that draws rects
+3. Support for ~~mouse and~~ gamepad
+~~4. Rewrote the code that draws rects~~
 
 ## License
 For personal practice or learning, play with it freely;)
