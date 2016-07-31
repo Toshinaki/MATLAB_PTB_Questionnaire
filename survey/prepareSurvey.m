@@ -1,4 +1,4 @@
-function [ paperTexture, paperRect, questLine, ansLine, questH, ansW, instruc ] = prepareSurvey( isdialog,  filename, survey_type, questNum, ansNum, showQuestNum)
+function [ paperTexture, paperRect, questH, ansH, questYs, ansYs, instruc ] = prepareSurvey( isdialog,  filename, survey_type, questNum, ansNum, showQuestNum)
 %PREPARESURVEY Prepare survey texture for later drawing
 
 
@@ -101,6 +101,21 @@ fontsize = 15;
 
 
 %--------------------------------------------------------------------------
+%                       Record position infos
+%--------------------------------------------------------------------------
+% Record all Y information to reduce calculation in mainloop
+% And to support mouse
+questYs = zeros(1, questNum);
+switch survey_type
+    case 'question'
+        ansYs = zeros(questNum, ansNum);
+        ansH = zeros(questNum, ansNum); % height of every answer
+    case 'likert'
+        ansYs = zeros(1, questNum); 
+        ansH = fontsize; % height of every answer; for likert, this is a constant number
+end
+
+%--------------------------------------------------------------------------
 %                       Make background and survey texture
 %--------------------------------------------------------------------------
 
@@ -121,6 +136,16 @@ Screen('TextFont', paperTexture, 'Courier');
 switch survey_type
     case 'question'
         for i = 1:length(questions)
+            % Record question Ys 
+            questYs(i) = (i-0.5) * questH;
+            % Record answer Ys
+            baseY = (i-1) * questH + (questLine(i)+1) * fontsize + fontsize/5; % this height may need some modification to show correctlu on your machine
+            for j = 1:ansNum
+                ansH(i, j) = ansLine(i, j) * fontsize;
+                baseY = baseY + ansH(i, j);
+                ansYs(i, j) = baseY - ansH(i, j)/2;
+            end
+            % Draw questions and answers
             anss = strjoin(answers(i, :), '\n');
             qstring = [questions{i} '\n\n' anss];
             nx = DrawFormattedText(paperTexture, sprintf('%2d. ', i), 5, questH*(i-1)+fontsize, 0);
@@ -128,13 +153,18 @@ switch survey_type
         end
     case 'likert'
         for i = 1:length(questions)
+            % Record question Ys 
+            questYs(i) = (i-0.5) * questH;
+            % Record answer Ys
+            baseY = (i-1) * questH + (questLine(i)+1) * fontsize + fontsize/5; % this height may need some modification to show correctlu on your machine
+            ansYs(i) = baseY + fontsize/2;
+            % Draw questions
             qstring = [questions{i} '\n\n'];
             nx = DrawFormattedText(paperTexture, sprintf('%2d. ', i), 5, questH*(i-1)+fontsize, 0);
             [~, ny] = DrawFormattedText(paperTexture, qstring, nx+5, questH*(i-1)+fontsize, 0);
-            
+            % Draw answers
             for j = 1:ansNum
                 DrawFormattedText(paperTexture, num2str(j), (j-0.5)*ansW, ny, 0);
             end
         end
 end
-
