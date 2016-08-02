@@ -1,6 +1,13 @@
 # MATLAB_PTB_Questionnaire
 Display a questionnaire using psychtoolbox, and get input from keyboard, mouse, or gamepad
 
+### --2016/08/02 update--
+Added:
+- Support for gamepad
+
+- On my PC, the configuration is done for OS - Ubuntu and gamepad - Logitech Gamepad F310, the configuration file is uploaded too in "etc" folder. Read the >> help GamePad for more details about this file.
+- You may need to modify the configuration file to support for gamepad on your PC.
+
 ### --2016/07/31 update--
 Added:
 - Support for mouse
@@ -42,12 +49,18 @@ Run a demo by executing Mainloop.m
 1. Any key click would do.
 2. Move mouse to the top edge or bottom edge to scroll. (I use this because that linux don't support GetMouseWheel function ORZ)
 
+### Gamepad:
+1. B to make choice
+2. LB, RB to travel among questions
+3. Up, Down (or Left, Right for likert) to select answer
+
 ## Todo:
 
 1. save selections to a file
-2. Is there a way to register key-press instead of the ugly "if elseif end".
-3. Support for ~~mouse and~~ gamepad
+2. Is there a way to register key-press instead of the ugly(?) "~~if elseif end~~ swtich".
+3. ~~Support for mouse and gamepad~~
 4. ~~Rewrote the code that draws rects~~
+5. Deal with large file
 
 ## License
 For personal practice or learning, play with it freely;)
