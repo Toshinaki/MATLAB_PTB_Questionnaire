@@ -36,10 +36,6 @@ In this new version, the rects will be generated real time. Which means the same
 
 ----------------------------------------------
 
-The code in folder oldVer can be executed individually.
-
-**Make sure the oldVer folder is not at same path with Mainloop.m.** Some functions of old and new have same name, and this may cause some unanticipated error.
-
 Run a demo by executing Mainloop.m
 > the loop will automatically quit after all questions been answered
 
