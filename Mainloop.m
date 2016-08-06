@@ -50,12 +50,12 @@ HideCursor;
 
 % Define some DEFAULT values
 isdialog = true; % Change this value to determine whether to use dialog
-filename = 'survey.csv'; % The file name of survey to run; will open browser if not exists
+filename = 'surveylong.csv'; % The file name of survey to run; will open browser if not exists
 survey_type = 'likert'; % Type of the survey, can be "question", "likert"
-questNum = 10; % Number of questions in this survey
+questNum = 30; % Number of questions in this survey
 ansNum = 5; % Number of answers of each question
 showQuestNum = 10; % Number of questions to display in one screen; you may need to try few times to get best display
-respdevice = 'game'; % The way participants take the survey; could be "key", "mouse", "game"
+respdevice = 'key'; % The way participants take the survey; could be "key", "mouse", "game"
 
 % Prepare survey texture for later drawing; the file is loaded inside
 % prepareSurvey.m; for the detail of the csv file's structure, see loadSurvey.m
@@ -83,13 +83,15 @@ scolor = [0 1 0 0.2];
 % Response DEVICE settings
 switch respdevice
     case 'key'
+        KbName('UnifyKeyNames');
         % Key settings
         upkey = KbName('UpArrow');
         downkey = KbName('DownArrow');
-        leftkey = KbName('LeftArrow');
-        rightkey = KbName('RightArrow');
-        escapekey = KbName('ESCAPE');
-        spacekey = KbName('space');
+        numkeys = 11:11+ansNum-1;
+        % numkeys = [88 89 90 84 85 86 80 81 82];
+        returnkey = KbName('Return'); % 37 or 105; use find to check
+        returnkey = returnkey(1);
+        browsing = 0; % for quick browsing
     case 'game'
         % Gamepad settings
         % These may different in your pc and gamepad
@@ -108,15 +110,18 @@ switch respdevice
         GamepadName = 'Logitech Gamepad F310';
         gi = Gamepad('GetGamepadIndicesFromNames', GamepadName);
         selectButton = 2;
-        movePre = 5;
-        moveNxt = 6;
-        btns = [selectButton movePre moveNxt];
-        switch survey_type
-            case 'question' % up, down for answers
-                ansDirect = 10;
-            case 'likert' % left, right for answers
-                ansDirect = 9;
-        end
+        %movePre = 5;
+        %moveNxt = 6;
+        %btns = [selectButton movePre moveNxt];
+        leftstick = [3 4];
+%         switch survey_type
+%             case 'question' % up, down for answers
+%                 ansDirect = 10;
+%             case 'likert' % left, right for answers
+%                 ansDirect = 9;
+%         end
+        browsing1 = 0;
+        browsing2 = 0;
 end
 
 % Base rect for questions and answers
@@ -273,7 +278,7 @@ case 'key'
         %---------- This is for keyboard------------------------------------
         while true
             [keyDown, secs, keycode] = KbCheck;
-            if keycode(spacekey) % Start loop if space pressed
+            if find(keycode)==returnkey % Start loop if space pressed
                 while keyDown % loop until key realeased; in fact keyboard condition doese not need for this; cause only when a question and an answer is hovered does space make a choice
                     [keyDown, secs, keycode] = KbCheck;
                 end
@@ -288,16 +293,13 @@ case 'key'
         % Start loop to check for keyboard input
         while true
             [keyDown, secs, keycode] = KbCheck;
-            if ~keyDown
+            k = find(keycode);
+            if ~keyDown || isempty(k)
                 continue
             end
-            k = find(keycode);
+            
+            k = k(1); % do not support for multiple keys
             switch k
-                case spacekey % space pressed
-                    if currQ && currA % when both question and answer is focused
-                        selects(currQ, :) = 0;
-                        selects(currQ, currA) = 1; % then record that selection
-                    end
                 case upkey % up pressed
                     if currQ > 1 % current focusing question is the 1st one then don't change focus
                         currQ = currQ - 1; % otherwise move focus 1 question up
@@ -308,16 +310,20 @@ case 'key'
                         currQ = currQ + 1;
                     end
                     currA = 0;
-                case leftkey % left
-                    if currA > 1
-                        currA = currA - 1;
+                case returnkey % return pressed
+                    if currQ < questNum % same as downkey
+                        currQ = currQ + 1;
                     end
-                case rightkey % right
-                    if currA < ansNum
-                        currA = currA + 1;
+                    currA = 0;
+                otherwise % 
+                    k = find(numkeys==k); % index of  pressed key in numkeys
+                    if ~isempty(k)
+                        currA = k;
+                        selects(currQ, :) = 0;
+                        selects(currQ, currA) = 1;
+                    else
+                        continue
                     end
-                otherwise % no meaningful key pressed, then go back to the start point of the loop
-                    continue
             end
             
             % Draw to screen based on the input
@@ -350,9 +356,7 @@ case 'key'
                         currY = ansYs(currQ);
                         arect = CenterRectOnPointd([0 0 round(595 / ansNum) fontsize], aCenters(currA), currY);
                 end
-                if k == spacekey
-                    tempRects(:, currQ) = arect;
-                end
+                tempRects(:, currQ) = arect;
                 arect(2:2:end) = arect(2:2:end) + offset * questH;
                 Screen('FrameRect', window, acolor, arect); % draw a rect over the hovering answer
             end
@@ -374,7 +378,23 @@ case 'key'
             end
             
             % Do not go back until all keys are released
+            % except for up and down
+            % for quick browsing
             while keyDown
+                k = find(keycode);
+                if keycode(upkey) || keycode(downkey)
+                    if browsing
+                        WaitSecs(0.05);
+                    else
+                        WaitSecs(0.5);
+                    end
+                    [keyDown, secs, keycode] = KbCheck;
+                    if keycode(upkey) || keycode(downkey)
+                        browsing = 1;
+                        break
+                    end
+                end
+                browsing = 0;
                 [keyDown, secs, keycode] = KbCheck;
             end
         end
@@ -390,53 +410,54 @@ case 'key'
         
         while true
             % Check for buttons; if no buttons pressed, keep checking
-            while true
-                % Check if any button gets pressed
-                btnpressed = 0;
-                isselect = 0;
-                
-                for b = btns
-                    if Gamepad('GetButton', gi, b)
-                        btnpressed = 1;
-                        switch b
-                            case 2 % B
-                                if currQ && currA % when both question and answer is focused
-                                    isselect = 1;
-                                    selects(currQ, :) = 0;
-                                    selects(currQ, currA) = 1; % then record that selection
-                                end
-                            case 5 % LB
-                                if currQ > 1
-                                    currQ = currQ - 1;
-                                    currA = 0;
-                                end
-                            case 6 % RB
-                                if currQ < questNum
-                                    currQ = currQ + 1;
-                                    currA = 0;
-                                end
-                        end
-                    end
+            btnpsd = 0;
+            isselect = 0;
+            
+            if Gamepad('GetButton', gi, selectButton)
+                btnpsd = 1;
+                if currQ && currA
+                    isselect = 1;
+                    selects(currQ, :) = 0;
+                    selects(currQ, currA) = 1;
                 end
-                
-                axisState = Gamepad('GetAxis', gi, ansDirect);
-                if axisState < 0 % Move to previous answer
-                    btnpressed = 1;
-                    if currA > 1
-                        currA = currA - 1;
-                    end
+            end
+            
+            axisState = Gamepad('GetAxis', gi, 4); % up down
+            if axisState
+                btnpsd = 1;
+            end
+            if axisState < 0 % up
+                if currQ > 1
+                    currQ = currQ - 1;
+                    currA = 0;
                 end
-                if axisState > 0 % Move to next answer
-                    btnpressed = 1;
-                    if currA < ansNum
-                        currA = currA + 1;
-                    end
+            elseif axisState > 0 % down
+                if currQ < questNum
+                    currQ = currQ + 1;
+                    currA = 0;
                 end
-                
-                % If any button gets pressed, move to the drawings
-                if btnpressed
-                    break
+            end
+            
+            axisState = Gamepad('GetAxis', gi, 3); % left right
+            if axisState
+                btnpsd = 1;
+            end
+            if axisState < 0 % left
+                if currA > 1
+                    currA = currA - 1;
+                else
+                    currA = ansNum;
                 end
+            elseif axisState > 0 % right
+                if currA < ansNum
+                    currA = currA + 1;
+                else
+                    currA = 1;
+                end
+            end
+
+            if ~btnpsd
+                continue
             end
             
             % Draw to screen based on the input
@@ -460,7 +481,7 @@ case 'key'
                 qrect = CenterRectOnPointd(baseQRect, xCenter, currY);
                 Screen('FillRect', window, qcolor, qrect); % draw a rect over the question
             end
-            if currA % An answer is focused; the space key must be pressed to show the rect
+            if currA % An answer is focused
                 switch survey_type
                     case 'question'
                         currY = ansYs(currQ, currA);
@@ -494,18 +515,41 @@ case 'key'
             
             % Do not go back until all keys are released
             while true
-                btnpressed = 0;
-                for i = btns
-                    if Gamepad('GetButton', gi, i)
-                        btnpressed = 1;
+                btnpsd = 0;
+                if Gamepad('GetButton', gi, selectButton) % B is pressed, wait for release
+                    btnpsd = 1;
+                end
+
+                
+                if Gamepad('GetAxis', gi, 3) % left right
+                    btnpsd = 1;
+                    if browsing1
+                        WaitSecs(0.2);
+                    else
+                        WaitSecs(0.25);
+                    end
+                    if Gamepad('GetAxis', gi, 3)
+                        browsing1 = 1;
                         break
                     end
+                    browsing1 = 0;
                 end
-                axisState = Gamepad('GetAxis', gi, ansDirect);
-                if axisState ~= 0
-                    btnpressed = 1;
+                
+                if Gamepad('GetAxis', gi, 4) % up down
+                    btnpsd = 1;
+                    if browsing2
+                        WaitSecs(0.05);
+                    else
+                        WaitSecs(0.5);
+                    end
+                    if Gamepad('GetAxis', gi, 4)
+                        browsing2 = 1;
+                        break
+                    end
+                    browsing2 = 0;
                 end
-                if ~btnpressed
+                
+                if ~btnpsd
                     break
                 end
             end
