@@ -68,6 +68,6 @@ Run a demo by executing Mainloop.m
 For personal practice or learning, play with it freely;)
 
 For scientific research or experiment, please reference this using:
-> TOSHINAKI. (2016). MATLAB_PTB_Questionnaire: 2016/08/06 first release. Zenodo. 10.5281/zenodo.59760
+> TOSHINAKI et al.. (2016). MATLAB_PTB_Questionnaire: 2016/08/06 first release. Zenodo. 10.5281/zenodo.59760
 
 For other purpose, do contact me!
