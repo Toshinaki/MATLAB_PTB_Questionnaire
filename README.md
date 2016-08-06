@@ -1,6 +1,11 @@
 # MATLAB_PTB_Questionnaire
 Display a questionnaire using psychtoolbox, and get input from keyboard, mouse, or gamepad
 
+### --2016/08/06 update--
+Changed:
+- Keyboard: Instead of using left and right arrow to select answers, now I use number keys (1 to 9) to do selecting. This idea is from Yaguchi.<br /> Also, the enter (or return) key now used as "go to next question", where up and down arrow are used for quick navigation.
+- Gamepad: Now I use left stick for select questions and answers. This idea is from Miyakawa.<br /> Besides that, hold the stick will enable the quick navigation.
+
 ### --2016/08/02 update--
 Added:
 - Support for gamepad
@@ -42,8 +47,9 @@ Run a demo by executing Mainloop.m
 
 ## Control keys:
 #### Keyboard:
-1. Arrow keys -- up, down for question; left, right for answer
-2. Space key -- select current answer (somehow the enter key can't be detected during the loop)
+1. Arrow keys -- Up, down for quickly navigate question; 
+2. Number keys -- Select an answer; 
+3. Return -- Go to next question
 
 #### Mouse:
 1. Any key click would do.
@@ -51,8 +57,7 @@ Run a demo by executing Mainloop.m
 
 ### Gamepad:
 1. B to make choice
-2. LB, RB to travel among questions
-3. Up, Down (or Left, Right for likert) to select answer
+2. Left stick -- hold it to up or down to select questions; hold it left or right to select answers; hold still for quick navigation
 
 ## Todo:
 
@@ -61,6 +66,7 @@ Run a demo by executing Mainloop.m
 3. ~~Support for mouse and gamepad~~
 4. ~~Rewrote the code that draws rects~~
 5. Deal with large file
+
 
 ## License
 For personal practice or learning, play with it freely;)
