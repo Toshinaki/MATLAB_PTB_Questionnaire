@@ -23,15 +23,16 @@ pfolder = [mainFolder '/' num2str(id) '/'];
   % file for participant information
 ct = fix(clock);
 ct = sprintf('%4d%02d%02d%02d%02d', ct(1:end-1));
-partinfo = {['ID,' num2str(id)] ['DATE,' ct] 'NAME' 'GENDER' 'AGE' 'STROOP' 'CAMERA'};
-  % file for stroop
-strp = {'Trial #, Color Name, Real Color, Responded?, Which?, Correct?, Onset Time, Response Time, Delay'};
-  % file for emotion regulation
-emrgl = {'Pic #, Pic Emotion, Response'};
-
-files = {ct 'stroop' 'reg' 'mood1' 'mood2' 'questnr'};
+partinfo = {['ID,' num2str(id)] ['DATE,' ct] 'NAME' 'GENDER' 'AGE'};
+  % file1
+file1 = {'Trial #, var1, var2, var3'};
+  % file2
+file2 = {'#, var1, var2, var3'};
+  
+files = {ct 'file1' 'file2' 'file3'};
 % Contents
-ctn = {partinfo strp emrgl {''} {''} {''}};
+% file3 is blank file
+ctn = {partinfo file1 file2 {''}};
 
 for i = 1:length(files)
     f = files{i};
