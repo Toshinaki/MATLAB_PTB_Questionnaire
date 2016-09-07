@@ -1,5 +1,13 @@
-# MATLAB_PTB_Questionnaire
+# MATLAB_PTB_Questionnaire V2.0
 Display a questionnaire using psychtoolbox, and get input from keyboard, mouse, or gamepad
+
+### --2016/09/07 update--
+Changed:
+- Mainloop: As you can see, the Mainloop.m file now contains almostly nothing. And there is a new folder names "Mainloop parts". Choose the parts you want to use in the experiment and paste the part to Mainloop.m. (Tired of switch command for different devices so I seperated the file for each devices available. The keyboard support is not completed now, though it's not difficult to implement it)
+
+Added:
+- Generate files to save experiment data. See the helperFuncs/savedata for more details.
+- Also added some scripts to check input and release. All in helperFuncs/.
 
 ### --2016/08/06 update--
 Changed:
