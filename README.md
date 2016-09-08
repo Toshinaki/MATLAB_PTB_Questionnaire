@@ -5,6 +5,7 @@ Display a questionnaire using psychtoolbox, and get input from keyboard, mouse, 
 Changed:
 - Mainloop: As you can see, the Mainloop.m file now contains almost nothing. And there is a new folder names "Mainloop parts". Choose the parts you want to use in experiment and paste the part into Mainloop.m. (Tired of switch command for different devices so I seperated the file for each devices available. The keyboard support is not completed now, though it's not difficult to implement it)
 - Instruction: Since more than one input device may be used in an experiment, the old way in which I get the instructions with device name won't be useful any more. There will be a file named "instructions.txt" and the old getInstruc.m will try to locate it and read the instructions. And the rest remains same.
+- Control: The way you get input changed a bit. See "Control keys" below for more details.
 
 Added:
 - Generate files to save experiment data. See the helperFuncs/savedata for more details.
@@ -51,7 +52,7 @@ Run a demo by executing Mainloop.m
 > however, you need to use sca manually to clean the screen, for now
 
 ## Control keys:
-#### Keyboard:
+#### Keyboard (not implemented now):
 1. Arrow keys -- Up, down for quickly navigate question; 
 2. Number keys -- Select an answer; 
 3. Return -- Go to next question
@@ -62,7 +63,8 @@ Run a demo by executing Mainloop.m
 
 ### Gamepad:
 1. B to make choice
-2. Left stick -- hold it to up or down to select questions; hold it left or right to select answers; hold still for quick navigation
+2. LB for previous question; RB for next; press still for quick navigation
+3. Left stick -- for questionnaires in those the answers align vertically, move up or down would do the select; for those horizontally, left and right; hold still for quick navigation
 
 ## Todo:
 
@@ -71,6 +73,7 @@ Run a demo by executing Mainloop.m
 3. ~~Support for mouse and gamepad~~
 4. ~~Rewrote the code that draws rects~~
 5. Deal with large file
+6. Mouse click on an answer would trigger scroll event and goes to next question automatically.
 
 
 ## License
