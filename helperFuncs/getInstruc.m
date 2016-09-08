@@ -1,7 +1,9 @@
 function [ instruc ] = getInstruc(  )
 %GETINSTRUC Return instructions for different device
 % Newline: linux - \n; osx - \r; windows - \r\n
-% Since I'm using "\n" in the file for new line of instuctions
+% I'm using "\n" in the file for new line of instuctions
+% One paragraph is an instruction
+% And a new paragraph will recognised as another instruction
 % Change the delimiter of your file to avoid problem
 % ; + * ! # etc. make it something you won't use in the instructions
 
