@@ -1,6 +1,12 @@
-function [ window, windowRect, white, black, vbl, ifi ] = prepareScreen( ssize )
+function [ window, windowRect, vbl, ifi ] = prepareScreen( ssize )
 %GETSCREEN Get screen ready for dispaly
 %   Return screen information for manipulation
+
+%--------------------------------------------------------------------------
+%                       Global variables
+%--------------------------------------------------------------------------
+global black white grey;
+
 
 if nargin < 1
     ssize = [0 0 1280 1024];
@@ -14,6 +20,7 @@ sca;
 % Here we call some default settings for setting up Psychtoolbox
 PsychDefaultSetup(2);
 
+
 %--------------------------------------------------------------------------
 %                       Screen initialization
 %--------------------------------------------------------------------------
@@ -22,13 +29,16 @@ PsychDefaultSetup(2);
 % will display on an external monitor if one is connected.
 screenid = max(Screen('Screens'));
 
-% Determine the values of black and white
+% color
 black = BlackIndex(screenid);
 white = WhiteIndex(screenid);
 grey = white / 2;
 
 % Set up screen
 [window, windowRect] = PsychImaging('OpenWindow', screenid, grey, ssize);
+
+% Set font
+Screen('TextFont', window, 'TakaoExGothic');
 
 % Set the blend function
 Screen('BlendFunction', window, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
