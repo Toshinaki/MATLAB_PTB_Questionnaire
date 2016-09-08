@@ -3,7 +3,8 @@ Display a questionnaire using psychtoolbox, and get input from keyboard, mouse, 
 
 ### --2016/09/07 update--
 Changed:
-- Mainloop: As you can see, the Mainloop.m file now contains almostly nothing. And there is a new folder names "Mainloop parts". Choose the parts you want to use in the experiment and paste the part to Mainloop.m. (Tired of switch command for different devices so I seperated the file for each devices available. The keyboard support is not completed now, though it's not difficult to implement it)
+- Mainloop: As you can see, the Mainloop.m file now contains almost nothing. And there is a new folder names "Mainloop parts". Choose the parts you want to use in experiment and paste the part into Mainloop.m. (Tired of switch command for different devices so I seperated the file for each devices available. The keyboard support is not completed now, though it's not difficult to implement it)
+- Instruction: Since more than one input device may be used in an experiment, the old way in which I get the instructions with device name won't be useful any more. There will be a file named "instructions.txt" and the old getInstruc.m will try to locate it and read the instructions. And the rest remains same.
 
 Added:
 - Generate files to save experiment data. See the helperFuncs/savedata for more details.
